@@ -8,53 +8,45 @@ import java.util.List;
 
 
 @Service
-public class EmployeeServiceImpl implements EmployeeService {
-    final int id = 10;
+public class EmployeeServiceImpl {
+    private final List<Employee> employees = new ArrayList<>();
+    private final int MAX_SIZE = 2;
 
-    List<Employee> staff = new ArrayList<>(List.of(
-            new Employee("Ковалюсь","Иван"),
-            new Employee("Голуб", "Богдан"),
-            new Employee("Голубцов", "Валерий"),
-            new Employee("Голубцов","Ростислав" )
-    ));
-
-
-    @Override
-    public Employee addPerson(String name, String lastName) {
-        Employee person = new Employee(name, lastName);
-        if (staff.size() > id) {
-            throw new EmployeeStorageIsFullException("Робочие места заняты");
-        } else if (staff.contains(person)) {
-            throw new EmployeeAlreadyAddedException("Сотрудник уже на работе");
-        } else {
-            staff.add(person);
-            return staff.get(staff.indexOf(person));
+    public Employee add(String firstName, String lastName) {
+        if (employees.size() >= MAX_SIZE) {
+            throw new EmployeeStorageIsFullException("Массив сотрудников переполнен");
         }
+
+        Employee newEmployee = new Employee(firstName, lastName);
+
+        if (employees.contains(newEmployee)) {
+            throw new EmployeeAlreadyAddedException("Сотрудник " + newEmployee + " уже существует");
+        }
+
+        employees.add(newEmployee);
+        return newEmployee;
     }
 
-    @Override
-    public Employee deletePerson(String name, String lastName) {
-        Employee person = new Employee(name, lastName);
-        if (!staff.contains(person)) {
+    public Employee find(String firstName, String lastName) {
+        Employee employeeForFind = new Employee(firstName, lastName);
+
+        if (!employees.contains(employeeForFind)) {
             throw new EmployeeNotFoundException("Такого сотрудника нет");
-        } else {
-            staff.remove(person);
-            return person;
         }
+
+        return employees.get(employees.indexOf(employeeForFind));
     }
 
+    public Employee remove(String firstName, String lastName) {
+        Employee employeeForRemove = new Employee(firstName, lastName);
 
-    @Override
-    public Employee findPerson(String name, String lastName) {
-        Employee person = new Employee(name, lastName);
-        if (!staff.contains(person)) {
+        if (!employees.contains(employeeForRemove)) {
             throw new EmployeeNotFoundException("Такого сотрудника нет");
-        } else {
-            return person;
         }
+        employees.remove(employeeForRemove);
+        return employeeForRemove;
     }
-    @Override
-    public List<Employee> showAllPersons() {
-        return staff;
+    public List<Employee> getAll() {
+        return employees;
     }
 }

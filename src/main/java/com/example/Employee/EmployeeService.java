@@ -9,4 +9,14 @@ public interface EmployeeService {
     Employee findPerson(String name, String lastName);
 
     List<Employee> showAllPersons();
+
+    Employee find(String firstName, String lastName);
+
+    Employee add(String firstName, String lastName);
+
+    Employee remove(String firstName, String lastName);
+
+    default List<Employee> getAll() {
+        return null;
+    }
 }

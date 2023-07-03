@@ -11,37 +11,34 @@ import java.util.List;
 @RequestMapping("/employee")
 public class EmployeeController {
 
-    @ExceptionHandler
+    @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<String> handleException(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private final EmployeeServiceImpl employeeService;
-    public EmployeeController(EmployeeServiceImpl employeeService) {
+    private final EmployeeService employeeService;
+
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
-    @GetMapping("/add")
-    public Employee addEmployee(@RequestParam("name") String name,
-                                @RequestParam("lastName") String lastName)
-    {
-        return employeeService.addPerson(name, lastName);
-    }
-    @GetMapping("/remove")
-    public Employee removeEmployee(@RequestParam("name") String name,
-                                   @RequestParam("lastName") String lastName)
-    {
-        return employeeService.deletePerson(name, lastName);
+    @GetMapping(path = "/add")
+    public Employee addEmployee(@RequestParam String firstName, @RequestParam String lastName) {
+        return employeeService.add(firstName, lastName);
     }
 
-    @GetMapping("/find")
-    public Employee findEmployee(@RequestParam("name") String name,
-                                 @RequestParam("lastName") String lastName)
-    {
-        return employeeService.findPerson(name, lastName);
+    @GetMapping(path = "/get")
+    public Employee findEmployee(@RequestParam String firstName, @RequestParam String lastName) {
+        return employeeService.find(firstName, lastName);
     }
-    @GetMapping("/all")
-    public List<Employee> allEmployee() {
-        return employeeService.showAllPersons();
+
+    @GetMapping(path = "/remove")
+    public Employee removeEmployee(@RequestParam String firstName, @RequestParam String lastName) {
+        return employeeService.remove(firstName, lastName);
+    }
+
+    @GetMapping(path = "/getAll")
+    public List<Employee> getEmployees() {
+        return employeeService.getAll();
     }
 }
